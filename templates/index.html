@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title></title>
+</head>
+<body>
+    <div>
+        <h2>Available products</h2>
+        <form action="/add_to_cart" method="post">
+            <select name="item">
+                {% for item in goods %}
+                <option value="{{ item }}">{{ item|title }}</option>
+                {% endfor %}
+            </select>
+            <input type="number" name="quantity" required>
+            <input type="submit" value="Add to cart">
+        </form>
+    </div>
+    <div>
+        <h2>Your cart</h2>
+        <ul>
+            {% for name, quantity in cart.items() %}
+            <li>{{ name|title }} × {{ quantity }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    <form action="/pay" method="post">
+        {% if cart|length %}<input type="submit" value="Pay">{% endif %}
+    </form>
+</body>
+</html>
