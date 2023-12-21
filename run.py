@@ -1,4 +1,7 @@
+import os
 from flask import Flask, request, jsonify, render_template, session, redirect
+import sentry_sdk
+from sentry_sdk.integrations.flask import FlaskIntegration
 from time import sleep
 from random import choice
 from loguru import logger
@@ -10,6 +13,15 @@ logger.add(sys.stderr, format="{time} {level} {message}", filter="Amazon", level
 
 
 app = Flask(__name__)
+
+sentry_dsn = os.getenv('SENTRY_DSN', '')
+
+if sentry_dsn:
+    sentry_sdk.init(
+        dsn=sentry_dsn,
+        integrations=[FlaskIntegration()]
+    )
+
 app.config['SECRET_KEY'] = "akjsdhfljkahlskjdsfhkahkj"
 
 
@@ -58,4 +70,5 @@ def reset():
     session["cart"] = {}
     return redirect('/')
 
-app.run(debug=True)
+
+app.run(debug=True, host='0.0.0.0', port=5000)
