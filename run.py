@@ -1,15 +1,24 @@
+import logging
 import os
 from flask import Flask, request, jsonify, render_template, session, redirect
 import sentry_sdk
 from sentry_sdk.integrations.flask import FlaskIntegration
 from time import sleep
 from random import choice
-from loguru import logger
 from payment import pay
 import sys
+from fluent import asynchandler as fluent_asynchandler
 
-
-logger.add(sys.stderr, format="{time} {level} {message}", filter="Amazon", level="DEBUG")
+# Fluentd logger
+fluent_format = {
+    'host': os.getenv('FLUENT_HOST', 'localhost'),
+    'port': os.getenv('FLUENT_PORT', 24224),
+    'tag': 'app.log'
+}
+fluent_handler = fluent_asynchandler.FluentHandler(**fluent_format)
+fluent_handler.setLevel(logging.WARNING)
+logger = logging.getLogger('fluentd_logger')
+logger.addHandler(fluent_handler)
 
 
 app = Flask(__name__)
@@ -51,7 +60,7 @@ def index():
 def add_to_cart():
     item = request.form["item"]
     if item not in goods:
-        logger.warning(f"{item} is added to cart")
+        logger.warning({"item": item, "message": f"{item} is added to cart"})
     quantity = request.form["quantity"]
     session["cart"][item] = quantity
     session.modified = True

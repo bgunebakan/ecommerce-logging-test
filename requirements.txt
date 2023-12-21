@@ -1,3 +1,4 @@
 flask
 loguru
 sentry-sdk
+fluent-logger

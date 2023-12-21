@@ -60,3 +60,12 @@ docker compose up -d
 
 After installing Sentry, follow the instructions for Sentry configurations to properly set it up for your application's logging needs.
 Get help from Sentry docs. https://docs.sentry.io/product/sentry-basics/integrate-backend/
+
+### Step 7: Fluentd Configuration
+
+Our project is using ElasticSearch + Fluentd + Kibana (EFK) Stack for logging. Run following command to deploy logging stack.
+
+```bash
+cd sentry
+docker compose -f docker-compose.efk.yml up -d
+```
